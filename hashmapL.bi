@@ -1,12 +1,30 @@
-' =====================================================
-' Í¨ÓÃ HashMap Ä£¿é£¨2 µÄÃİÍ°´óĞ¡ + Î»ÔËËãÓÅ»¯°æ£©
-' ×÷Õß£ºycp, 406192297@qq.com
-' Ê¹ÓÃ·½Ê½£ºdefine_hashmap(keytype, valuetype, mapname)
-' =====================================================
+' ########################################################################################
+' é€šç”¨ HashMap æ¨¡å—ï¼ˆ2 çš„å¹‚æ¡¶å¤§å° + ä½è¿ç®—ä¼˜åŒ–ç‰ˆï¼‰
+' ä½œè€…ï¼šycp, 406192297@qq.com
+' ä½¿ç”¨æ–¹å¼ï¼šdefine_hashmap(keytype, valuetype, mapname)
+' License: Distributed under the MIT license.
+'
+' Permission is hereby granted, free of charge, to any person obtaining a copy of this
+' software and associated documentation files (the "Software"), to deal in the Software
+' without restriction, including without limitation the rights to use, copy, modify, merge,
+' publish, distribute, sublicense, and/or sell copies of the Software, and to permit
+' persons to whom the Software is furnished to do so, subject to the following conditions:
+
+' The above copyright notice and this permission notice shall be included in all copies or
+' substantial portions of the Software.
+
+' THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
+' INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR
+' PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE
+' FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
+' OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+' DEALINGS IN THE SOFTWARE.'
+' ########################################################################################
+
 
 #include once "crt/mem.bi"
 
-'==============¸ßĞÔÄÜ×Ö·û´®¹şÏ£º¯Êı rapidhash ==============
+'==============é«˜æ€§èƒ½å­—ç¬¦ä¸²å“ˆå¸Œå‡½æ•° rapidhash ==============
 Dim Shared rapid_secret(0 To 7) As ULongInt = { &H2D358DCCAA6C78A5ull, &H8BB84B93962EACC9ull,&H4B33A62ED433D4A3ull, &H4D5A2DA51DE1AA47ull, _
 &HA0761D6478BD642Full,&HE7037ED1A0B428DBull,&H90ED1765281C388Cull, &HAAAAAAAAAAAAAAAAull }
 
@@ -100,7 +118,7 @@ Function rapidhashNano(ByVal key As Any Ptr, ByVal keylens As UInteger, ByVal se
     Function = rapidhashNano_internal(key, keylens, seed, @rapid_secret(0))
 End Function
 
-'==============¶àÀàĞÍ¹şÏ£º¯ÊıÖØÔØ====================
+'==============å¤šç±»å‹å“ˆå¸Œå‡½æ•°é‡è½½====================
 Declare function HashFunction overload (byref key as integer) as uinteger
 Declare Function HashFunction Overload (ByRef key As UInteger) As UInteger
 Declare Function HashFunction Overload (ByRef key As LongInt) As UInteger
@@ -172,31 +190,31 @@ function HashFunction overload (byref key as single) as uinteger
 end function
 
 ' =====================================================
-' Í¨ÓÃ¹şÏ£Ó³Éäºê£¨Ê¹ÓÃ New/Delete£¬2 µÄÃİÍ°´óĞ¡ + Î»ÔËËã£©
+' é€šç”¨å“ˆå¸Œæ˜ å°„å®ï¼ˆä½¿ç”¨ New/Deleteï¼Œ2 çš„å¹‚æ¡¶å¤§å° + ä½è¿ç®—ï¼‰
 ' =====================================================
 
 #macro DEFINE_HASHMAP(KEY_TYPE, VALUE_TYPE, MAP_NAME)    
-    ' ¼üÖµ¶Ô½á¹¹
+    ' é”®å€¼å¯¹ç»“æ„
     type MAP_NAME##KeyValue
         key as KEY_TYPE
         value as VALUE_TYPE
     end type
     
-    ' ¹şÏ£½Úµã½á¹¹
+    ' å“ˆå¸ŒèŠ‚ç‚¹ç»“æ„
     type MAP_NAME##Node
         key as KEY_TYPE
         value as VALUE_TYPE
         next as MAP_NAME##Node ptr
     end type
 
-    ' µü´úÆ÷×´Ì¬Ã¶¾Ù
+    ' è¿­ä»£å™¨çŠ¶æ€æšä¸¾
     enum MAP_NAME##IteratorState
         MAP_NAME##_ITERATOR_INVALID = 0
         MAP_NAME##_ITERATOR_VALID = 1
         MAP_NAME##_ITERATOR_END = 2
     end enum
 
-    ' ¹şÏ£Ó³ÉäÀà
+    ' å“ˆå¸Œæ˜ å°„ç±»
     type MAP_NAME
     private:
         m_buckets as MAP_NAME##Node ptr ptr
@@ -243,7 +261,7 @@ end function
         declare sub PrintStatistics()
     end type
 
-    ' ·µ»Ø²»Ğ¡ÓÚ n µÄ 2 µÄÃİ£¨n > 0£©
+    ' è¿”å›ä¸å°äº n çš„ 2 çš„å¹‚ï¼ˆn > 0ï¼‰
     function MAP_NAME.NextPowerOfTwo(byval n as uinteger) as uinteger
         if n <= 0 then return 1
         n -= 1
@@ -255,7 +273,7 @@ end function
         return n + 1
     end function
 
-    ' Ä¬ÈÏ¹¹Ôìº¯Êı
+    ' é»˜è®¤æ„é€ å‡½æ•°
     constructor MAP_NAME()
         m_bucketCount = 16   ' 2^4
         m_buckets = callocate(m_bucketCount * sizeof(MAP_NAME##Node ptr))
@@ -271,10 +289,10 @@ end function
         m_iterVersion = 0
     end constructor
     
-    ' ´ø²ÎÊıµÄ¹¹Ôìº¯Êı
+    ' å¸¦å‚æ•°çš„æ„é€ å‡½æ•°
     constructor MAP_NAME(byval initialSize as integer, byval factor as single = 0.75)
         if initialSize < 1 then initialSize = 16
-        m_bucketCount = NextPowerOfTwo(initialSize)   ' È¡ 2 µÄÃİ
+        m_bucketCount = NextPowerOfTwo(initialSize)   ' å– 2 çš„å¹‚
         m_buckets = callocate(m_bucketCount * sizeof(MAP_NAME##Node ptr))
         if m_buckets = 0 then
             print "Error: Failed to allocate hashmap buckets"
@@ -288,7 +306,7 @@ end function
         m_iterVersion = 0
     end constructor
 
-    ' Îö¹¹º¯Êı
+    ' ææ„å‡½æ•°
     destructor MAP_NAME()
         Clear()
         if m_buckets <> 0 then
@@ -297,17 +315,17 @@ end function
         end if
     end destructor
     
-    ' »ñÈ¡Í°Ë÷Òı£¨Î»ÔËËãÓÅ»¯£©
+    ' è·å–æ¡¶ç´¢å¼•ï¼ˆä½è¿ç®—ä¼˜åŒ–ï¼‰
     function MAP_NAME.GetBucketIndex(byval hash as uinteger) as uinteger
         return hash and (m_bucketCount - 1)
     end function
     
-    ' Ä¬ÈÏ¹şÏ£º¯Êı
+    ' é»˜è®¤å“ˆå¸Œå‡½æ•°
     function MAP_NAME.DefaultHash(byref key as KEY_TYPE) as uinteger
         return HashFunction(key)
     end function
     
-    ' ÓÅ»¯¹şÏ£±í´óĞ¡£¨µ÷ÕûÎª 2 µÄÃİ£©
+    ' ä¼˜åŒ–å“ˆå¸Œè¡¨å¤§å°ï¼ˆè°ƒæ•´ä¸º 2 çš„å¹‚ï¼‰
     sub MAP_NAME.Optimize()
         if m_count = 0 then exit sub
         dim optimalSize as integer = NextPowerOfTwo(m_count / m_loadFactor)
@@ -316,34 +334,34 @@ end function
         end if
     end sub
     
-    ' ÖØĞÂ¹şÏ££¨ĞÂ´óĞ¡±ØĞëÎª 2 µÄÃİ£©
+    ' é‡æ–°å“ˆå¸Œï¼ˆæ–°å¤§å°å¿…é¡»ä¸º 2 çš„å¹‚ï¼‰
     sub MAP_NAME.Rehash(newSize as uinteger)
-        ' È·±£ĞÂ´óĞ¡ÊÇ 2 µÄÃİ
+        ' ç¡®ä¿æ–°å¤§å°æ˜¯ 2 çš„å¹‚
         newSize = NextPowerOfTwo(newSize)
         if newSize = m_bucketCount then exit sub
         
-        ' ±£´æ¾ÉÍ°Êı×éĞÅÏ¢
+        ' ä¿å­˜æ—§æ¡¶æ•°ç»„ä¿¡æ¯
         dim oldBuckets as MAP_NAME##Node ptr ptr = m_buckets
         dim oldBucketCount as integer = m_bucketCount
         
-        ' ´´½¨ĞÂÍ°Êı×é
+        ' åˆ›å»ºæ–°æ¡¶æ•°ç»„
         dim newBuckets as MAP_NAME##Node ptr ptr = callocate(newSize * sizeof(MAP_NAME##Node ptr))
         If newBuckets = 0 Then
             print "Warning: Rehash failed due to memory allocation"
             exit sub
         end if
         
-        ' ÖØĞÂ¹şÏ£ËùÓĞ½Úµãµ½ĞÂÍ°Êı×é
+        ' é‡æ–°å“ˆå¸Œæ‰€æœ‰èŠ‚ç‚¹åˆ°æ–°æ¡¶æ•°ç»„
         for i as uinteger = 0 to oldBucketCount - 1
             dim current as MAP_NAME##Node ptr = oldBuckets[i]
             while current <> 0
                 dim nextNode as MAP_NAME##Node ptr = current->next
                 
-                ' ¼ÆËãĞÂ¹şÏ£Î»ÖÃ£¨Ê¹ÓÃÎ»ÔËËã£©
+                ' è®¡ç®—æ–°å“ˆå¸Œä½ç½®ï¼ˆä½¿ç”¨ä½è¿ç®—ï¼‰
                 dim newHash as uinteger = DefaultHash(current->key)
                 dim newIndex as uinteger = newHash and (newSize - 1)
                 
-                ' ²åÈëµ½ĞÂÍ°£¨Í·²å·¨£©
+                ' æ’å…¥åˆ°æ–°æ¡¶ï¼ˆå¤´æ’æ³•ï¼‰
                 current->next = newBuckets[newIndex]
                 newBuckets[newIndex] = current
                 
@@ -351,19 +369,19 @@ end function
             wend
         next
         
-        ' ¸üĞÂ³ÉÔ±±äÁ¿
+        ' æ›´æ–°æˆå‘˜å˜é‡
         m_buckets = newBuckets
         m_bucketCount = newSize
         
-        ' ÊÍ·Å¾ÉµÄÍ°Êı×é£¨Ö»ÊÍ·ÅÊı×éÄÚ´æ£¬½ÚµãÒÑ¾­ÒÆ¶¯£©
+        ' é‡Šæ”¾æ—§çš„æ¡¶æ•°ç»„ï¼ˆåªé‡Šæ”¾æ•°ç»„å†…å­˜ï¼ŒèŠ‚ç‚¹å·²ç»ç§»åŠ¨ï¼‰
         deallocate(oldBuckets)
         
-        ' °æ±¾ºÅÔö¼Ó
+        ' ç‰ˆæœ¬å·å¢åŠ 
         m_version += 1
         m_iterState = MAP_NAME##_ITERATOR_INVALID
     end sub
 
-    ' ÇåÀíËùÓĞ½Úµã
+    ' æ¸…ç†æ‰€æœ‰èŠ‚ç‚¹
     sub MAP_NAME.Clear()
         if m_buckets = 0 then exit sub
         
@@ -381,9 +399,9 @@ end function
         m_iterState = MAP_NAME##_ITERATOR_INVALID
     end sub
 
-    ' Ìí¼Ó/¸üĞÂ¼üÖµ¶Ô
+    ' æ·»åŠ /æ›´æ–°é”®å€¼å¯¹
     function MAP_NAME.Add(byref key as KEY_TYPE, byref value as VALUE_TYPE) as boolean
-        ' ¼ì²éÊÇ·ñĞèÒªÀ©Èİ
+        ' æ£€æŸ¥æ˜¯å¦éœ€è¦æ‰©å®¹
         If m_count >= m_bucketCount * m_loadFactor Then
             Dim newSize As UInteger = m_bucketCount * 2            
             If newSize > &H40000000 Then  newSize = &H40000000
@@ -395,7 +413,7 @@ end function
         
         dim current as MAP_NAME##Node ptr = m_buckets[index]
 
-        ' ¼ì²éÊÇ·ñÒÑ´æÔÚ£¬Èç¹û´æÔÚÔò¸üĞÂ
+        ' æ£€æŸ¥æ˜¯å¦å·²å­˜åœ¨ï¼Œå¦‚æœå­˜åœ¨åˆ™æ›´æ–°
         while current <> 0
             if current->key = key then
                 current->value = value
@@ -405,7 +423,7 @@ end function
             current = current->next
         wend
 
-        ' ´´½¨ĞÂ½Úµã
+        ' åˆ›å»ºæ–°èŠ‚ç‚¹
         dim newNode as MAP_NAME##Node ptr = New MAP_NAME##Node
         if newNode = 0 then return false
         
@@ -419,7 +437,7 @@ end function
         return true
     end function
 
-    ' »ñÈ¡Öµ
+    ' è·å–å€¼
     function MAP_NAME.Get(byref key as KEY_TYPE) as VALUE_TYPE
         dim hash as uinteger = DefaultHash(key)
         dim index as uinteger = GetBucketIndex(hash)
@@ -436,7 +454,7 @@ end function
         return tmpValue
     end function
     
-    ' ²éÕÒÖµ£¨·µ»ØÊÇ·ñ´æÔÚ£©
+    ' æŸ¥æ‰¾å€¼ï¼ˆè¿”å›æ˜¯å¦å­˜åœ¨ï¼‰
     function MAP_NAME.find(byref key as KEY_TYPE, byref value as VALUE_TYPE) as boolean
         dim hash as uinteger = DefaultHash(key)
         dim index as uinteger = GetBucketIndex(hash)
@@ -454,7 +472,7 @@ end function
         return false
     end function
 
-    ' É¾³ı¼ü
+    ' åˆ é™¤é”®
     function MAP_NAME.Remove(byref key as KEY_TYPE) as boolean
         dim hash as uinteger = DefaultHash(key)
         dim index as uinteger = GetBucketIndex(hash)
@@ -481,7 +499,7 @@ end function
         return false
     end function
 
-    ' ¼ì²é¼üÊÇ·ñ´æÔÚ
+    ' æ£€æŸ¥é”®æ˜¯å¦å­˜åœ¨
     function MAP_NAME.ContainsKey(byref key as KEY_TYPE) as boolean
         dim hash as uinteger = DefaultHash(key)
         Dim index As uInteger = GetBucketIndex(hash)
@@ -494,28 +512,28 @@ end function
         return false
     end function
 
-    ' »ñÈ¡ÔªËØÊıÁ¿
+    ' è·å–å…ƒç´ æ•°é‡
     property MAP_NAME.Size() as uinteger
         return m_count
     end property
     
-    ' »ñÈ¡Í°ÈİÁ¿
+    ' è·å–æ¡¶å®¹é‡
     property MAP_NAME.Capacity() as uinteger
         return m_bucketCount
     end property
     
-    ' »ñÈ¡µ±Ç°¸ºÔØÒò×Ó
+    ' è·å–å½“å‰è´Ÿè½½å› å­
     property MAP_NAME.LoadFactor() as single
         if m_bucketCount = 0 then return 0.0
         return m_count / m_bucketCount
     end property
     
-    ' ÊÇ·ñÎª¿Õ
+    ' æ˜¯å¦ä¸ºç©º
     property MAP_NAME.IsEmpty() as boolean
         return m_count = 0
     end property
 
-    ' ÒÆ¶¯µ½µÚÒ»¸öÔªËØ
+    ' ç§»åŠ¨åˆ°ç¬¬ä¸€ä¸ªå…ƒç´ 
     function MAP_NAME.MoveFirst() as boolean
         if m_iterVersion <> m_version then
             m_iterState = MAP_NAME##_ITERATOR_INVALID
@@ -529,7 +547,7 @@ end function
         return MoveNext()
     end function
 
-    ' ÒÆ¶¯µ½ÏÂÒ»¸öÔªËØ
+    ' ç§»åŠ¨åˆ°ä¸‹ä¸€ä¸ªå…ƒç´ 
     function MAP_NAME.MoveNext() as boolean
         if m_iterVersion <> m_version then
             m_iterState = MAP_NAME##_ITERATOR_INVALID
@@ -559,7 +577,7 @@ end function
         return false
     end function
 
-    ' »ñÈ¡µ±Ç°¼ü
+    ' è·å–å½“å‰é”®
     function MAP_NAME.CurrentKey(byref key as KEY_TYPE) as boolean
         if m_iterState = MAP_NAME##_ITERATOR_VALID and m_currentIter <> 0 and m_iterVersion = m_version then
             key = m_currentIter->key
@@ -568,7 +586,7 @@ end function
         return false
     end function
 
-    ' »ñÈ¡µ±Ç°Öµ
+    ' è·å–å½“å‰å€¼
     function MAP_NAME.CurrentValue(byref value as VALUE_TYPE) as boolean
         if m_iterState = MAP_NAME##_ITERATOR_VALID and m_currentIter <> 0 and m_iterVersion = m_version then
             value = m_currentIter->value
@@ -577,7 +595,7 @@ end function
         return false
     end function
     
-    ' ±éÀú»Øµ÷º¯Êı
+    ' éå†å›è°ƒå‡½æ•°
     sub MAP_NAME.ForEach(byval callback as sub(byval key as KEY_TYPE, byval value as VALUE_TYPE))
         dim ver as integer = m_version
         for i as uinteger = 0 to m_bucketCount - 1
@@ -590,7 +608,7 @@ end function
         next
     end sub
     
-    ' ±éÀú»Øµ÷º¯Êı£¨Ö¸Õë°æ±¾£©
+    ' éå†å›è°ƒå‡½æ•°ï¼ˆæŒ‡é’ˆç‰ˆæœ¬ï¼‰
     sub MAP_NAME.ForEachPtr(byval callback as sub(byval key as KEY_TYPE ptr, byval value as VALUE_TYPE ptr))
         dim ver as integer = m_version
         for i as uinteger = 0 to m_bucketCount - 1
@@ -604,7 +622,7 @@ end function
     End Sub
  
     
-    ' ´òÓ¡Í³¼ÆĞÅÏ¢
+    ' æ‰“å°ç»Ÿè®¡ä¿¡æ¯
     Sub MAP_NAME.PrintStatistics()
         print "=== HashMap Statistics ==="
         print "Size: " & m_count
