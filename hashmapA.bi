@@ -1,19 +1,38 @@
-' =====================================================
-' Í¨ÓÃ HashMap Ä£¿é£¨¿ª·ÅÑ°Ö··¨ + ÏßĞÔÌ½²â£©¡ª¡ª ĞÔÄÜÓÅ»¯°æ
-' ÓÅ»¯£ºSoA ²¼¾Ö + ×´Ì¬Ö¸ÎÆ + Ä¹±®¸ĞÖªÀ©Èİ + Ô­µØÄ¹±®ÇåÀí
-' ×÷Õß£ºycp, 406192297@qq.com
-' Ê¹ÓÃ·½Ê½£ºdefine_hashmap(keytype, valuetype, mapname)
-' =====================================================
+' ########################################################################################
+' é€šç”¨ HashMap æ¨¡å—ï¼ˆå¼€æ”¾å¯»å€æ³• + çº¿æ€§æ¢æµ‹ï¼‰
+' ä¼˜åŒ–ï¼šSoA å¸ƒå±€ + çŠ¶æ€æŒ‡çº¹ + å¢“ç¢‘æ„ŸçŸ¥æ‰©å®¹ + åŸåœ°å¢“ç¢‘æ¸…ç†
+' ä½œè€…ï¼šycp, 406192297@qq.com
+' ä½¿ç”¨æ–¹å¼ï¼šdefine_hashmap(keytype, valuetype, mapname)
+
+' License: Distributed under the MIT license.
+'
+' Permission is hereby granted, free of charge, to any person obtaining a copy of this
+' software and associated documentation files (the "Software"), to deal in the Software
+' without restriction, including without limitation the rights to use, copy, modify, merge,
+' publish, distribute, sublicense, and/or sell copies of the Software, and to permit
+' persons to whom the Software is furnished to do so, subject to the following conditions:
+
+' The above copyright notice and this permission notice shall be included in all copies or
+' substantial portions of the Software.
+
+' THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
+' INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR
+' PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE
+' FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
+' OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+' DEALINGS IN THE SOFTWARE.'
+' ########################################################################################
+
 
 ' =====================================================
-' Í¨ÓÃ HashMap Ä£¿é£¨¿ª·ÅÑ°Ö··¨ + ÏßĞÔÌ½²â£©¡ª¡ª ĞÔÄÜÓÅ»¯°æ
-' ÓÅ»¯£ºSoA ²¼¾Ö + ×´Ì¬Ö¸ÎÆ + Ä¹±®¸ĞÖªÀ©Èİ + Ô­µØÄ¹±®ÇåÀí
-' ×÷Õß£ºycp, 406192297@qq.com
+' é€šç”¨ HashMap æ¨¡å—ï¼ˆå¼€æ”¾å¯»å€æ³• + çº¿æ€§æ¢æµ‹ï¼‰â€”â€” æ€§èƒ½ä¼˜åŒ–ç‰ˆ
+' ä¼˜åŒ–ï¼šSoA å¸ƒå±€ + çŠ¶æ€æŒ‡çº¹ + å¢“ç¢‘æ„ŸçŸ¥æ‰©å®¹ + åŸåœ°å¢“ç¢‘æ¸…ç†
+' ä½œè€…ï¼šycp, 406192297@qq.com
 ' =====================================================
 
 #include once "crt/mem.bi"
 
-'==============¸ßĞÔÄÜ×Ö·û´®¹şÏ£º¯Êı rapidhash ==============
+'==============é«˜æ€§èƒ½å­—ç¬¦ä¸²å“ˆå¸Œå‡½æ•° rapidhash ==============
 Dim Shared rapid_secret(0 To 7) As ULongInt = { &H2D358DCCAA6C78A5ull, &H8BB84B93962EACC9ull,&H4B33A62ED433D4A3ull, &H4D5A2DA51DE1AA47ull, _
 &HA0761D6478BD642Full,&HE7037ED1A0B428DBull,&H90ED1765281C388Cull, &HAAAAAAAAAAAAAAAAull }
 
@@ -107,7 +126,7 @@ Function rapidhashNano(ByVal key As Any Ptr, ByVal keylens As UInteger, ByVal se
     Function = rapidhashNano_internal(key, keylens, seed, @rapid_secret(0))
 End Function
 
-'==============¶àÀàĞÍ¹şÏ£º¯ÊıÖØÔØ====================
+'==============å¤šç±»å‹å“ˆå¸Œå‡½æ•°é‡è½½====================
 Declare function HashFunction overload (byref key as integer) as uinteger
 Declare Function HashFunction Overload (ByRef key As UInteger) As UInteger
 Declare Function HashFunction Overload (ByRef key As LongInt) As UInteger
@@ -179,8 +198,8 @@ function HashFunction overload (byref key as single) as uinteger
 end function
 
 ' =====================================================
-' Í¨ÓÃ HashMap ºê£¨¿ª·ÅÑ°Ö· + ÏßĞÔÌ½²â£©
-' state ×Ö½Ú£ºbit0-1 ×´Ì¬£¨0=EMPTY,1=OCCUPIED,2=DELETED£©£¬bit2-7 Ö¸ÎÆ
+' é€šç”¨ HashMap å®ï¼ˆå¼€æ”¾å¯»å€ + çº¿æ€§æ¢æµ‹ï¼‰
+' state å­—èŠ‚ï¼šbit0-1 çŠ¶æ€ï¼ˆ0=EMPTY,1=OCCUPIED,2=DELETEDï¼‰ï¼Œbit2-7 æŒ‡çº¹
 ' =====================================================
 
 #macro DEFINE_HASHMAP(KEY_TYPE, VALUE_TYPE, MAP_NAME)
@@ -200,7 +219,7 @@ end function
         m_vals        As VALUE_TYPE Ptr
         m_state       As UByte Ptr
         m_bucketCount As UInteger
-        m_count       As UInteger   ' OCCUPIED ÊıÁ¿
+        m_count       As UInteger   ' OCCUPIED æ•°é‡
         m_used        As UInteger   ' OCCUPIED + DELETED
         m_loadFactor  As Single
         m_version     As Integer
@@ -241,7 +260,7 @@ end function
         Declare Sub PrintStatistics()
     End Type
 
-    '---------- ¸¨Öú ----------
+    '---------- è¾…åŠ© ----------
     Function MAP_NAME.NextPowerOfTwo(ByVal n As UInteger) As UInteger
         If n = 0 Then Return 1
         n -= 1
@@ -257,7 +276,7 @@ end function
         Return HashFunction(key)
     End Function
 
-    '---------- ¹¹Ôì ----------
+    '---------- æ„é€  ----------
     Constructor MAP_NAME()
         m_bucketCount = 16
         m_keys  = Callocate(m_bucketCount * SizeOf(KEY_TYPE))
@@ -292,7 +311,7 @@ end function
         m_iterVersion = 0
     End Constructor
 
-    '---------- Îö¹¹ ----------
+    '---------- ææ„ ----------
     Destructor MAP_NAME()
         Clear()
         If m_keys  <> 0 Then Deallocate(m_keys)  : m_keys  = 0
@@ -300,7 +319,7 @@ end function
         If m_state <> 0 Then Deallocate(m_state) : m_state = 0
     End Destructor
 
-    '---------- Rehash£¨ÖØ½¨ÈıÌ×Êı×é£¬¶ªÆúÄ¹±®£©----------
+    '---------- Rehashï¼ˆé‡å»ºä¸‰å¥—æ•°ç»„ï¼Œä¸¢å¼ƒå¢“ç¢‘ï¼‰----------
    Sub MAP_NAME.Rehash(newSize As UInteger)
         newSize = NextPowerOfTwo(newSize)
         If newSize = m_bucketCount AndAlso m_used = m_count Then Exit Sub
@@ -326,7 +345,7 @@ end function
 
         For i As UInteger = 0 To m_bucketCount - 1
             Dim s As UByte = oldSt[i]
-            If (s And 1) = 1 Then                     ' OCCUPIED£º°áµ½ĞÂ±í
+            If (s And 1) = 1 Then                     ' OCCUPIEDï¼šæ¬åˆ°æ–°è¡¨
                 Dim h  As UInteger = DefaultHash(oldKs[i])
                 Dim fp As UByte    = (h Shr 24) And &H3F
                 Dim idx As UInteger = h And newMask
@@ -338,7 +357,7 @@ end function
                 newVals[idx]  = oldVs[i]
                 newState[idx] = (fp Shl 2) Or 1
             End If
-            ' ¡ï ¹Ø¼ü£ºOCCUPIED ºÍ DELETED ¶¼ÒªÊÍ·Å¾É String£¨ÑÓ³ÙÊÍ·ÅµÄ²¹³¥£©
+            ' â˜… å…³é”®ï¼šOCCUPIED å’Œ DELETED éƒ½è¦é‡Šæ”¾æ—§ Stringï¼ˆå»¶è¿Ÿé‡Šæ”¾çš„è¡¥å¿ï¼‰
             If s <> 0 Then
                 oldKs[i] = defaultKey
                 oldVs[i] = defaultValue
@@ -381,10 +400,10 @@ end function
 
     '---------- Add ----------
     Function MAP_NAME.Add(ByRef key As KEY_TYPE, ByRef value As VALUE_TYPE) As Boolean
-        ' ÏÈËã¹şÏ££¨ÓëÈİÁ¿ÎŞ¹Ø£©£¬±ÜÃâÀ©ÈİºóÖØ¸´¼ÆËã
+        ' å…ˆç®—å“ˆå¸Œï¼ˆä¸å®¹é‡æ— å…³ï¼‰ï¼Œé¿å…æ‰©å®¹åé‡å¤è®¡ç®—
         Dim h As UInteger = DefaultHash(key)
 
-        ' À©Èİ£º»ùÓÚ m_used£¨OCCUPIED + DELETED£©£¬·ÀÖ¹Ä¹±®ÀÛ»ı
+        ' æ‰©å®¹ï¼šåŸºäº m_usedï¼ˆOCCUPIED + DELETEDï¼‰ï¼Œé˜²æ­¢å¢“ç¢‘ç´¯ç§¯
         If (m_used + 1) >= m_bucketCount * m_loadFactor Then
             Dim newSize As UInteger = m_bucketCount * 2
             If newSize > &H40000000 Then newSize = &H40000000
@@ -399,7 +418,7 @@ end function
         Do
             Dim s As UByte = m_state[idx]
             If s = 0 Then
-                ' EMPTY£ºÓÅÏÈ¸´ÓÃ firstTomb
+                ' EMPTYï¼šä¼˜å…ˆå¤ç”¨ firstTomb
                 Dim target As UInteger
                 If firstTomb >= 0 Then
                     target = CUInt(firstTomb)
@@ -415,10 +434,10 @@ end function
                 m_iterState = MAP_NAME##_ITERATOR_INVALID
                 Return True
             ElseIf s = 2 Then
-                ' DELETED£º¼ÇÏÂµÚÒ»¸öÄ¹±®
+                ' DELETEDï¼šè®°ä¸‹ç¬¬ä¸€ä¸ªå¢“ç¢‘
                 If firstTomb < 0 Then firstTomb = idx
             ElseIf (s Shr 2) = fp Then
-                ' OCCUPIED ÇÒÖ¸ÎÆÆ¥Åä£ºÔÙ±ÈÍêÕû key
+                ' OCCUPIED ä¸”æŒ‡çº¹åŒ¹é…ï¼šå†æ¯”å®Œæ•´ key
                 If m_keys[idx] = key Then
                     m_vals[idx] = value
                     m_version += 1
@@ -455,7 +474,7 @@ end function
                     End If
                 End If
             End If
-            ' DELETED ¼ÌĞøÌ½²â
+            ' DELETED ç»§ç»­æ¢æµ‹
             idx = (idx + 1) And mask
         Loop
         Return False
@@ -467,7 +486,7 @@ end function
         Dim fp   As UByte    = (h Shr 24) And &H3F
         Dim mask As UInteger = m_bucketCount - 1
         Dim idx  As UInteger = h And mask
-        Dim st   As UByte Ptr    = m_state       ' ¡ï ¾Ö²¿»¯£¬Ê¡µôÃ¿´Î×Ö¶Î¶ÁÈ¡
+        Dim st   As UByte Ptr    = m_state       ' â˜… å±€éƒ¨åŒ–ï¼Œçœæ‰æ¯æ¬¡å­—æ®µè¯»å–
         Dim ks   As KEY_TYPE Ptr = m_keys
 
         Do
@@ -476,7 +495,7 @@ end function
             If (s And 1) = 1 Then
                 If (s Shr 2) = fp Then
                     If ks[idx] = key Then
-                        st[idx] = 2                ' ¡ï Ö»±ê¼Ç£¬²»Îö¹¹ String
+                        st[idx] = 2                ' â˜… åªæ ‡è®°ï¼Œä¸ææ„ String
                         m_count -= 1
                         m_version += 1
                         m_iterState = MAP_NAME##_ITERATOR_INVALID
@@ -508,7 +527,7 @@ end function
         Return False
     End Function
 
-    '---------- ÊôĞÔ ----------
+    '---------- å±æ€§ ----------
     Property MAP_NAME.Size() As UInteger
         Return m_count
     End Property
@@ -526,7 +545,7 @@ end function
         Return m_count = 0
     End Property
 
-    '---------- µü´úÆ÷ ----------
+    '---------- è¿­ä»£å™¨ ----------
     Function MAP_NAME.MoveFirst() As Boolean
         m_iterPos = -1
         m_iterState = MAP_NAME##_ITERATOR_INVALID
@@ -578,7 +597,7 @@ end function
         Return False
     End Function
 
-    '---------- ±éÀú ----------
+    '---------- éå† ----------
     Sub MAP_NAME.ForEach(ByVal callback As Sub(ByVal key As KEY_TYPE, ByVal value As VALUE_TYPE))
         Dim ver As Integer = m_version
         For i As UInteger = 0 To m_bucketCount - 1
@@ -614,7 +633,7 @@ end function
         Rehash(target)
     End Sub
 
-    '---------- Í³¼Æ ----------
+    '---------- ç»Ÿè®¡ ----------
     Sub MAP_NAME.PrintStatistics()
         print "primehashmap v2 "
         Print "=== HashMap Statistics ==="
